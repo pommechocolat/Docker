@@ -3,7 +3,7 @@ Construction d'images docker pour gérer bases de données, serveur php de diff�
 
 ## Déploiement
 ### création d'une image
-Construction d'une image à partir du Dockerfile présent dans le dossier courant (.). Allec l'option -t elle sera nommé mariadb-jlm avec le tag latest. Ce tag est pris par défaut s'il n'est pas précisé.
+Construction d'une image à partir du Dockerfile présent dans le dossier courant (.). Avec l'option -t elle sera nommé mariadb-jlm avec le tag latest. Ce tag est pris par défaut s'il n'est pas précisé.
 '''
 docker build -t mariadb-jlm:latest .
 '''
@@ -30,3 +30,10 @@ Pour supprimer tous les conteneurs inactifs :
 ''' bash
 docker rm $(docker ps -a -q)
 '''
+
+# Preparation Dockerfile pour mariadb
+L'installation de MariaDB est assez direct lorsque les data sont embarquée dans le conteneur. Seulement, les ces data ne sont pas perrenes !!
+La solution souvent proposés consiste à monter un deuxième conteneur possédant les data... Pas si intéressant que ça. Sinon c'est l'installation docker qui doit tout posséder. Seulement sur OSX ou sur Window docker est dans une VM virtualbox... c'est pas terrible non plus.
+
+La solution donc est d'aller sur le host... mais là les choses ce complique pour la gestion des droits d'accès !
+

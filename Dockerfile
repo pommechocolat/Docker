@@ -4,6 +4,10 @@ FROM debian:testing
 MAINTAINER pommechocolat <dev.pommechocolat@free.fr>
 # C'est juste indispensable pour ne pas avoir de souci
 ENV DEBIAN_FRONTEND noninteractive
+ENV DOCKER_ID 1000 #valeur ID de docker. C'est avec cet ID que docker écrit sur le host'
+ENV DOCKER_GID 50  #valeur du GID de docker
+ENV ROOT_DB_PASS root
+RUN useradd -u 1000 -g 50 -c "MySQL Server" -d /var/lib/mysql -s /bin/false mysql
 
 #pour éviter le message invoke-rc.d: policy-rc.d denied execution of stop
 RUN dpkg-divert --local --rename --add /sbin/initctl
