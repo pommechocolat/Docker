@@ -24,4 +24,10 @@ RUN sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 # pour configurer mysql au départ, il faut donc lancer le serveur et faire la config dans le même run
 RUN /etc/init.d/mysql start; sleep 5; echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' with GRANT OPTION; GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;" | mysql
 #Cette "foreground command" permet de garder le serveur en mode démon lors d'un run.
-CMD /usr/bin/mysqld_safe
+#CMD /usr/bin/mysqld_safe
+#Insère le fichier _startMariaDB.sh dans le conteneur
+ADD ./_startMariaDB.sh /opt/startup.sh
+#Il faut avoir les droit en exécution sur le fichier !!
+RUN chmod 755 /opt/startup.sh
+# Au démarrage du conteneur on lance le script de démarrage de mariadb qui assure le lancement de /usr/bin/mysqld_safe
+CMD ["/opt/startup.sh"]
