@@ -9,16 +9,16 @@ GRANT_DEBIAN="GRANT ALL PRIVILEGES ON *.* to 'debian-sys-maint'@'localhost' IDEN
 if [ ! -f /var/lib/mysql/ibdata1 ]; then
 	mysql_install_db
 	/usr/bin/mysqld_safe &
-	sleep 10s
- 
-	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' with GRANT OPTION; GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;" | mysql
+	sleep 5s 
+  echo $GRANT_ROOT | mysql
   echo $GRANT_DEBIAN | mysql
 	killall mysqld
-	sleep 10s
+	sleep 5s
 fi 
 
 # Lance le serveur mariadb. Cette méthode de lancement conserve la main. On est bien en mode démon
 /usr/bin/mysqld_safe
-# on autorise root à ce connecter de toute part
-echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' with GRANT OPTION; GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;" | mysql
+# on autorise root à ce connecter de toute part. On rejout les privilège à chaque fois pour que ça fonctionne sur une installation definie par ailleurs ou l'on ne serait pas passé paur le test ci-dessous.
+echo $GRANT_ROOT | mysql
 echo $GRANT_DEBIAN | mysql
+#/bin/bash
