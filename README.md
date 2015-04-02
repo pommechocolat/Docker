@@ -37,11 +37,33 @@ Pour les tests, tant que le Dockerfile n'est pas bien réglé, il est plus simpl
 docker stop mydb; docker rm mydb; docker rmi my_mariadb
 ```
 
-### Preparation Dockerfile pour mariadb
+## Php5.3
+Pour construire l'image Php53, il suffit de se placer dans le dossier php5.3 et de lancer la commande
 
+```docker build -t php53:latest .
 
+```
+La commande peut être lancée plusieurs fois en modifiant le docker file. La nouvelle image prendra le nom, l'ancienne sera dénommé (<none>).
+
+Le lanement du serveur Php5.3 avec Apache 2.2 se fait à l'aide la commande :
+```
+docker run -td -p 80:80 php53:latest
+```
+
+-p 80:80 permet de transport du port de communicartion http vers l'extérieur
+ 
 ## Commandes utiles
 Pour supprimer tous les conteneurs (inactifs!) :
 ``` bash
 docker rm $(docker ps -a -q)
+```
+
+Suppresion de tous les conteneurs arrêtés
+```
+docker rm $(docker ps -a | grep "Exited" | cut -d \  -f1)
+```
+
+Suppression de toutes les images non nommées
+```
+docker rmi $(docker images | grep '<none>' | sed 's/  */:/g' | cut -d: -f3)
 ```

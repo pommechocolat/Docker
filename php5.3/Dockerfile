@@ -1,0 +1,47 @@
+# Docker file par JLM pour avoir un serveur web avec PHP5.3
+
+FROM debian:testing
+MAINTAINER pommechocolat <dev.pommechocolat@free.fr>
+# C'est juste indispensable pour ne pas avoir de souci
+ENV DEBIAN_FRONTEND noninteractive
+#pour éviter le message invoke-rc.d: policy-rc.d denied execution of stop
+RUN dpkg-divert --local --rename --add /sbin/initctl
+RUN ln -sf /bin/true /sbin/initctl
+
+RUN apt-get update > /dev/null
+# Pas certain d'avoir besoin de ça... mais comme y a une erreur... tentative de correction
+RUN apt-get -y install apt-utils > /dev/null
+RUN apt-get -y upgrade > /dev/null
+
+
+# Outils nécessaires à la compilation de php5.3 et apache2.2
+RUN apt-get -y install wget > /dev/null
+RUN apt-get -y install bzip2 > /dev/null
+RUN apt-get -y install gcc > /dev/null
+RUN apt-get -y install libxml2-dev > /dev/null
+RUN apt-get -y install make > /dev/null
+
+# Installation de apache2
+#RUN apt-get -y install apache2 > /dev/null
+WORKDIR /root
+RUN wget http://apache.crihan.fr/dist//httpd/httpd-2.2.29.tar.gz 
+RUN tar -xf httpd-2.2.29.tar.gz
+WORKDIR /root/httpd-2.2.29
+RUN ./configure --enable-so --enable-rewrite=shared > /dev/null
+RUN make > /dev/null
+RUN make install > /dev/null
+RUN echo "application/x-httpd-php php phtml php4" >> /usr/local/apache2/conf/mime.types 
+# Installation de php5.3
+WORKDIR /root
+RUN wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
+RUN tar -xf php-5.3.29.tar.bz2 > /dev/null
+WORKDIR /root/php-5.3.29
+RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs > /dev/null
+RUN make > /dev/null
+#RUN make test
+RUN make install > /dev/null
+
+RUN echo "<?php phpinfo(); " > /usr/local/apache2/htdocs/info.php
+
+ENTRYPOINT /usr/local/apache2/bin/httpd -D FOREGROUND
+#CMD ["/usr/local/apache2/bin/apachectl", "start"]
