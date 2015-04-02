@@ -38,16 +38,15 @@ docker stop mydb; docker rm mydb; docker rmi my_mariadb
 ```
 
 ## Php5.3
-Pour construire l'image Php53, il suffit de se placer dans le dossier php5.3 et de lancer la commande
+Pour construire l'image Php53, il suffit de se placer dans le dossier php5.3 et de lancer la commande :
 
 ```docker build -t php53:latest .
-
 ```
 La commande peut être lancée plusieurs fois en modifiant le docker file. La nouvelle image prendra le nom, l'ancienne sera dénommé (<none>).
-
-Le lanement du serveur Php5.3 avec Apache 2.2 se fait à l'aide la commande :
+  
+Le lanement du serveur Apache 2.2/Php5.3, avec l'accès à la base de données MariaDB, se fait à l'aide la commande :
 ```
-docker run -td -p 80:80 php53:latest
+docker run -td -p 80:80 --link mydb:db php53:latest
 ```
 
 -p 80:80 permet de transport du port de communicartion http vers l'extérieur

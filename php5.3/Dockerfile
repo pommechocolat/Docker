@@ -21,6 +21,8 @@ RUN apt-get -y install gcc > /dev/null
 RUN apt-get -y install libxml2-dev > /dev/null
 RUN apt-get -y install make > /dev/null
 
+RUN apt-get -y install libmysqlclient-dev > /dev/null
+
 # Installation de apache2
 #RUN apt-get -y install apache2 > /dev/null
 WORKDIR /root
@@ -36,7 +38,7 @@ WORKDIR /root
 RUN wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
 RUN tar -xf php-5.3.29.tar.bz2 > /dev/null
 WORKDIR /root/php-5.3.29
-RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs > /dev/null
+RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli
 RUN make > /dev/null
 #RUN make test
 RUN make install > /dev/null
