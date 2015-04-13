@@ -12,7 +12,7 @@ Une solution consiste à définir au préalable l'utilisateur mysql avec les bon
 ### création d'une image
 Construction d'une image à partir du Dockerfile présent dans le dossier courant (.). Avec l'option -t elle sera nommé mariadb-jlm avec le tag latest. Ce tag est pris par défaut s'il n'est pas précisé.
 ```
-docker build -t my_mariadb:latest .
+docker build -t db_maria_sql .
 ```
 
 Pour vérifier le bon résultat, on peut lister les images é vérifier que celle nommée mariadb-jlm existe bien avec le tag latest.
@@ -23,34 +23,61 @@ docker images
 ### lancement d'un conteneur
 Une fois l'image construite, il faut lancer un conteneur. Le -t permet d'avoir un tty afin d'accéder et de visualliser les commande myslq dans le conteneur. Le -d lance le conteneur comme un démon qui ne serêtera donc pas de lui même. On expose le port 3306 avec le -p afin d'accéder à mysql depuis le host. Le conteneur est nommé mydb et il est construit à partir de l'image mariadb-jlm
 ```
-docker run -dt -p 3306:3306 --name mydb my_mariadb
+docker run -dt -p 3306:3306 --name mydb db_maria_sql
 ```
 
 Si l'on veut travailler avec une persistance des data sur le host... voici la méthode pour lancer le conteneur. Il faut attendre quelques seconde la première fois car il fait installer les tables et placer les privilèges une première fois. 
 ``` bash
-docker run -dt -p 3306:3306 --name mydb -v /host/path/to/mysql_data:/var/lib/mysql my_mariadb
+docker run -dt -p 3306:3306 --name mydb -v /host/path/to/mysql_data:/var/lib/mysql db_maria_sql
 ```
 
 ### pour tout virer avant de recommencer
 Pour les tests, tant que le Dockerfile n'est pas bien réglé, il est plus simple et sûr de tout remetre à zero à chaque étape. Comme nous avons nommé nos image et conteneur, la liste de commandes suivante va bien :
 ```
-docker stop mydb; docker rm mydb; docker rmi my_mariadb
+docker stop mydb; docker rm mydb; docker rmi db_maria_sql
 ```
 
 ## Php5.3
 Pour construire l'image Php53, il suffit de se placer dans le dossier php5.3 et de lancer la commande :
 
-```docker build -t php53:latest .
+```
+docker build -t php53apache22 .
 ```
 La commande peut être lancée plusieurs fois en modifiant le docker file. La nouvelle image prendra le nom, l'ancienne sera dénommé (<none>).
   
-Le lanement du serveur Apache 2.2/Php5.3, avec l'accès à la base de données MariaDB, se fait à l'aide la commande :
+Le lanement du serveur Apache 2.2/Php5.3 se fait à l'aide la commande :
 ```
-docker run -td -p 80:80 --link mydb:db php53:latest
+docker run -td -p 80:80 -v /host/path/to/www_data:/usr/local/apache2/htdocs --name php53 php53apache22
 ```
-
 -p 80:80 permet de transport du port de communicartion http vers l'extérieur
  
+## RVM / Ruby
+Pour construire l'image RVM, il suffit de se placer dans le dossier RVM et de lancer la commande :
+```
+docker build -t rvm_maison .
+```
+On se moque pas mal de l'alerte concernant l'utilisation de RVM en tant que root car on est uniquement en root. Ceci dit pour travailler sur les fichiers de host ce n'est peut-être pas la panacée ?
+```
+docker run -td -v /host/path/to/sourceSassGuard:/mnt --name myrvm rvm_maison
+```
+
+Nous avons une machine à même de nous permettre de travailler avec les outils ruby. En se connectant sur la machine, il est possible de lancer des outils comme bundler si l'on possède un fichier Gemfile contenant les modules ruby nécessaire au projet.
+
+```
+docker-enter myrvm
+cd /mnt
+. /usr/local/rvm/scripts/rvm
+bundle install 
+```
+
+Ensuite on peu lancer guard pour recompiler les fichiers sur chaque modification. Cependant les fichiers modifiés dans /host/path/to/sourceSassGuard ne sont pas pris en compte... on est pas sur le même système. Il faut donc monter le dossier /mnt de la VM dans le Finder via sshfs après avoir installé sur OSX les outils OSxFuse et sshfs à l'aide de brew (https://github.com/osxfuse/osxfuse/wiki/SSHFS) :
+```
+mkdir /Volumes/fuse
+sshfs docker@192.168.59.103:/ /Volumes/fuse -ocache=no -onolocalcaches -ovolname=ssh
+```
+
+Le mot de passe de docker dans boot2docker est tcuser. Une fois connecté ainsi, les fichiers modifée dans /mnt sont reconnus comme tel par guard qui relance la compilation.
+
 ## Commandes utiles
 Pour supprimer tous les conteneurs (inactifs!) :
 ``` bash
@@ -66,3 +93,11 @@ Suppression de toutes les images non nommées
 ```
 docker rmi $(docker images | grep '<none>' | sed 's/  */:/g' | cut -d: -f3)
 ```
+
+## Redirection de port
+L'accès au host via l'url de boot2docker ne pose aucun problème.
+Il est possible d'attaquer boot2docker par localhost à la condition d'utiliser un port au delà de 1000 (exemple 8080) en configurant la VM dans Virtualbox avec une ligne de redirection de port de type : "docker,127.0.0.1, 8080, ,80". On peu aussi le faire à la ligne de commande avec la formule suivnate : 
+```
+VBoxManage controlvm boot2docker-vm natpf1 "docker,tcp,127.0.0.1,8080,,80"
+```
+
