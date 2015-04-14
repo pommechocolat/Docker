@@ -25,8 +25,7 @@ RUN apt-get -y install make > /dev/null
 # Nécessaire pour la compilation de PHP avec MySQL
 RUN apt-get -y install libmysqlclient-dev > /dev/null
 
-# Installation de apache2
-#RUN apt-get -y install apache2 > /dev/null
+# Installation de apache2.2
 WORKDIR /root
 RUN wget http://apache.crihan.fr/dist//httpd/httpd-2.2.29.tar.gz 
 RUN tar -xf httpd-2.2.29.tar.gz
@@ -44,6 +43,20 @@ RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mys
 RUN make > /dev/null
 #RUN make test
 RUN make install > /dev/null
+
+# Installation de Xdebug en version compatible PHP5.3
+WORKDIR /root
+RUN apt-get -y install autoconf
+RUN wget http://xdebug.org/files/xdebug-2.2.7.tgz
+RUN tar -xzf xdebug-2.2.7.tgz > /dev/null
+WORKDIR /root/xdebug-2.2.7
+RUN phpize
+RUN ./configure --enable-xdebug
+RUN make
+RUN make install
+# Configuration de php.ini. RQ : le nom de la machine (remote_host) est sans doute à modifier
+RUN echo "[Xdebug]\nzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so\nxdebug.remote_enable=1\nxdebug.remote_host=localhost\nxdebug.remote_port=9000\nxdebug.show_local_vars=1" > /usr/local/lib/php.ini
+RUN php --version
 
 RUN sed -i 's/User daemon/User apache/g' /usr/local/apache2/conf/httpd.conf
 RUN sed -i 's/Group daemon/Group staff/g' /usr/local/apache2/conf/httpd.conf
