@@ -51,6 +51,16 @@ docker run -td -p 80:80 -v /host/path/to/www_data:/usr/local/apache2/htdocs --na
 ```
 -p 80:80 permet de transport du port de communicartion http vers l'extérieur
  
+## PhpSilex
+Pour construire l'image phpSilex
+```
+docker build -t phpsilex .
+```
+Le lanement du serveur Apache/PHP se fait à l'aide la commande :
+```
+docker run -d -p 80:80 -v $(pwd)/Sites:/usr/local/apache2/htdocs  -v $(pwd)/logs:/usr/local/apache2/logs --name myphp phpsilex
+```
+
 ## RVM / Ruby
 Pour construire l'image RVM, il suffit de se placer dans le dossier RVM et de lancer la commande :
 ```
@@ -99,5 +109,30 @@ L'accès au host via l'url de boot2docker ne pose aucun problème.
 Il est possible d'attaquer boot2docker par localhost à la condition d'utiliser un port au delà de 1000 (exemple 8080) en configurant la VM dans Virtualbox avec une ligne de redirection de port de type : "docker,127.0.0.1, 8080, ,80". On peu aussi le faire à la ligne de commande avec la formule suivnate : 
 ```
 VBoxManage controlvm boot2docker-vm natpf1 "docker,tcp,127.0.0.1,8080,,80"
+```
+
+# Lancment des VM Docker
+## PHP53
+```
+docker run -td -p 80:80 -p 9000:9000 -v $(pwd)/Sites:/usr/local/apache2/htdocs -v $(pwd)logs:/usr/local/apache2/logs --name myphp53 php53apache22
+```
+### Options possibles
+--name myphp53
+
+## MariaDb
+```
+docker run -td -p 3306:3306 -v $(pwd)/db_data:/var/lib/mysql --name mydb db_maria_sql
+```
+### Options possibles
+--name mydb
+
+## Rvm
+```
+docker run -td -v $(pwd)/rubyRvm:/mnt --name myrvm rvm_maison
+```
+
+## PhpSilex
+```
+docker run -td -p 80:80 -v $(pwd)/Sites:/var/www/html -v $(pwd)/logsApache:/usr/local/apache2/logs --name myphp phpSilex
 ```
 
