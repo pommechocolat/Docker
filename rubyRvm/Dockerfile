@@ -32,3 +32,4 @@ RUN /bin/bash -l -c "rvm requirements"
 RUN /bin/bash -l -c "rvm install ruby-2"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 RUN echo ". /usr/local/rvm/scripts/rvm" >> /root/.bashrc
+CMD /bin/bash

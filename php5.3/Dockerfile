@@ -22,7 +22,8 @@ RUN apt-get -y install gcc > /dev/null
 RUN apt-get -y install libxml2-dev > /dev/null
 RUN apt-get -y install make > /dev/null
 
-# Nécessaire pour la compilation de PHP avec MySQL
+# Nécessaire pour la compilation de PHP avec MySQL, mcrypt, curl, ldap
+RUN apt-get -y install libldap2-dev
 RUN apt-get -y install libmysqlclient-dev > /dev/null
 RUN apt-get -y install libmcrypt-dev > /dev/null
 RUN apt-get -y install libcurl4-gnutls-dev > /dev/null
@@ -38,15 +39,16 @@ RUN make install > /dev/null
 RUN echo "application/x-httpd-php php phtml php4" >> /usr/local/apache2/conf/mime.types
 
 # Installation de php5.3
+RUN ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/
 WORKDIR /root
 RUN wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
 RUN tar -xf php-5.3.29.tar.bz2 > /dev/null
 WORKDIR /root/php-5.3.29
-RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli --with-curl=shared,/usr --with-mcrypt=shared,/usr
+RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli --with-curl=shared,/usr --with-mcrypt=shared,/usr --with-ldap=shared,/usr
 RUN make > /dev/null
 #RUN make test
 RUN make install > /dev/null
-RUN echo "extension=curl.so\nextension=mcrypt.so" >> /usr/local/lib/php.ini
+RUN echo "extension=curl.so\nextension=mcrypt.so\nextension=ldap.so" >> /usr/local/lib/php.ini
 
 # Installation de Xdebug en version compatible PHP5.3
 WORKDIR /root
