@@ -24,6 +24,8 @@ RUN apt-get -y install make > /dev/null
 
 # Nécessaire pour la compilation de PHP avec MySQL
 RUN apt-get -y install libmysqlclient-dev > /dev/null
+RUN apt-get -y install libmcrypt-dev > /dev/null
+RUN apt-get -y install libcurl4-gnutls-dev > /dev/null
 
 # Installation de apache2.2
 WORKDIR /root
@@ -34,15 +36,17 @@ RUN ./configure --enable-so --enable-rewrite=shared > /dev/null
 RUN make > /dev/null
 RUN make install > /dev/null
 RUN echo "application/x-httpd-php php phtml php4" >> /usr/local/apache2/conf/mime.types
+
 # Installation de php5.3
 WORKDIR /root
 RUN wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
 RUN tar -xf php-5.3.29.tar.bz2 > /dev/null
 WORKDIR /root/php-5.3.29
-RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli
+RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli --with-curl=shared,/usr --with-mcrypt=shared,/usr
 RUN make > /dev/null
 #RUN make test
 RUN make install > /dev/null
+RUN echo "extension=curl.so\nextension=mcrypt.so" >> /usr/local/lib/php.ini
 
 # Installation de Xdebug en version compatible PHP5.3
 WORKDIR /root
@@ -55,7 +59,7 @@ RUN ./configure --enable-xdebug
 RUN make
 RUN make install
 # Configuration de php.ini. RQ : le nom de la machine (remote_host) est sans doute à modifier
-RUN echo "[Xdebug]\nzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so\nxdebug.remote_enable=1\nxdebug.remote_host=localhost\nxdebug.remote_port=9000\nxdebug.show_local_vars=1" > /usr/local/lib/php.ini
+RUN echo "[Xdebug]\nzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so\nxdebug.remote_enable=1\nxdebug.remote_host=localhost\nxdebug.remote_port=9000\nxdebug.show_local_vars=1" >> /usr/local/lib/php.ini
 RUN php --version
 
 RUN sed -i 's/User daemon/User apache/g' /usr/local/apache2/conf/httpd.conf
