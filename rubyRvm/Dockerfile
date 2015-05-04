@@ -28,8 +28,8 @@ RUN apt-get install -qy curl > /dev/null
 RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 RUN curl -L https://get.rvm.io | bash -s stable
 RUN . /usr/local/rvm/scripts/rvm
-RUN /bin/bash -l -c "rvm requirements"
-RUN /bin/bash -l -c "rvm install ruby-2"
-RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
+RUN /bin/bash -l -c "rvm requirements" > /dev/null
+RUN /bin/bash -l -c "rvm install ruby-2" > /dev/null
+RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc" > /dev/null
 RUN echo ". /usr/local/rvm/scripts/rvm" >> /root/.bashrc
 CMD /bin/bash
