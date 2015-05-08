@@ -5,6 +5,7 @@
 docker ps -a
 
 #on arrête les conteneurs
+docker stop my53
 docker stop myphp53
 docker stop myphp
 docker stop mydb
