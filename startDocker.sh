@@ -32,7 +32,7 @@ ln -s /etc/apache2/sites-available/000-default.conf "$cdata/siteEnable/"
 
 docker run -td -p 3306:3306 -v "$cdata/db_data":/var/lib/mysql --name mydb db_maria_sql
 
-docker run -td -v "$cdata":/mnt --name myrvm rvm_maison
+docker run -td -p 35729:35729 -v "$cdata":/mnt --name myrvm rvm_maison
 
 
 docker ps -a
