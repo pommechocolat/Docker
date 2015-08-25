@@ -111,6 +111,23 @@ Il est possible d'attaquer boot2docker par localhost à la condition d'utiliser 
 VBoxManage controlvm boot2docker-vm natpf1 "docker,tcp,127.0.0.1,8080,,80"
 ```
 
+## Accès à MySQL via la ligne de commande
+Il arrive parfois que les dumps des bases de données comportent des carractères non UTF-8. Les fichiers de dumps ne sont alors plus interpretable par les outils tel que PhpMyAdmin ou SeqPro (sur OSX). La solution : travailler dirrectement en ligne de commande.
+
+Dans les VM les dossiers sont monté sur le dossier locaux désignés.
+
+Aussi il est possible de passer des fichers par exemple dans le dossier de data des base et de le voir dans la VM sous le chemin /var/lib/mysql
+
+Il est alors simple d'accèder avec les comandes suivantes : 
+  - pour charger un fichier dans une BD :
+    ```
+    docker exec -i mydb mysql nomBd < dumpBd.sql
+    ```
+  - pour accéder à la ligne de commade MySQL
+    ```
+    docker exec -t -i mydb mysql
+    ```
+
 # Lancment des VM Docker
 ## PHP53
 ```
