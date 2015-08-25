@@ -15,7 +15,7 @@ RUN apt-get update > /dev/null
 RUN apt-get -y install apt-utils > /dev/null
 RUN apt-get -y upgrade > /dev/null
 
-# Outils nécessaires à la compilation de php5.3 et apache2.2
+# Outils nécessaires à la compilation de php5.4 et apache2.2
 RUN apt-get -y install wget > /dev/null
 RUN apt-get -y install bzip2 > /dev/null
 RUN apt-get -y install gcc > /dev/null
@@ -38,12 +38,11 @@ RUN make > /dev/null
 RUN make install > /dev/null
 RUN echo "application/x-httpd-php php phtml php4" >> /usr/local/apache2/conf/mime.types
 
-# Installation de php5.3
 RUN ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/
 WORKDIR /root
-RUN wget http://in1.php.net/distributions/php-5.3.29.tar.bz2
-RUN tar -xf php-5.3.29.tar.bz2 > /dev/null
-WORKDIR /root/php-5.3.29
+RUN wget http://in1.php.net/distributions/php-5.4.43.tar.bz2
+RUN tar -xf php-5.4.43.tar.bz2 > /dev/null
+WORKDIR /root/php-5.4.43
 RUN ./configure --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql --with-mysqli --with-curl=shared,/usr --with-mcrypt=shared,/usr --with-ldap=shared,/usr > /dev/null
 RUN make > /dev/null
 #RUN make test
@@ -51,18 +50,21 @@ RUN make install > /dev/null
 RUN echo "extension=curl.so\nextension=mcrypt.so\nextension=ldap.so" >> /usr/local/lib/php.ini
 
 # Installation de Xdebug en version compatible PHP5.3
-WORKDIR /root
-RUN apt-get -y install autoconf > /dev/null
-RUN wget http://xdebug.org/files/xdebug-2.2.7.tgz
-RUN tar -xzf xdebug-2.2.7.tgz > /dev/null
-WORKDIR /root/xdebug-2.2.7
-RUN phpize > /dev/null
-RUN ./configure --enable-xdebug > /dev/null
-RUN make > /dev/null
-RUN make install > /dev/null
-# Configuration de php.ini. RQ : le nom de la machine (remote_host) est sans doute à modifier
-RUN echo "[Xdebug]\nzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so\nxdebug.remote_enable=1\nxdebug.remote_host=localhost\nxdebug.remote_port=9000\nxdebug.show_local_vars=1" >> /usr/local/lib/php.ini
-RUN php --version
+# WORKDIR /root
+# RUN apt-get -y install autoconf > /dev/null
+# RUN wget http://xdebug.org/files/xdebug-2.2.7.tgz
+# RUN tar -xzf xdebug-2.2.7.tgz > /dev/null
+# WORKDIR /root/xdebug-2.2.7
+# RUN phpize > /dev/null
+# RUN ./configure --enable-xdebug > /dev/null
+# RUN make > /dev/null
+# RUN make install > /dev/null
+# # Configuration de php.ini. RQ : le nom de la machine (remote_host) est sans doute à modifier
+# RUN echo "[Xdebug]\nzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20090626/xdebug.so\nxdebug.remote_enable=1\nxdebug.remote_host=localhost\nxdebug.remote_port=9000\nxdebug.show_local_vars=1" >> /usr/local/lib/php.ini
+# RUN php --version
+
+RUN sed -i 's/logs\/error_log/logs\/error.log/g' /usr/local/apache2/conf/httpd.conf
+RUN sed -i 's/logs\/access_log/logs\/access.log/g' /usr/local/apache2/conf/httpd.conf
 
 RUN sed -i 's/User daemon/User apache/g' /usr/local/apache2/conf/httpd.conf
 RUN sed -i 's/Group daemon/Group staff/g' /usr/local/apache2/conf/httpd.conf
@@ -71,3 +73,4 @@ RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
 RUN echo "<?php phpinfo(); " > /usr/local/apache2/htdocs/info.php
 
 ENTRYPOINT /usr/local/apache2/bin/httpd -D FOREGROUND
+#CMD /bin/bash

@@ -1,6 +1,6 @@
 # Docker file par JLM pour avoir un serveur de base de données
 
-FROM debian:testing
+FROM debian
 MAINTAINER pommechocolat <dev.pommechocolat@free.fr>
 # C'est juste indispensable pour ne pas avoir de souci
 ENV DEBIAN_FRONTEND noninteractive
