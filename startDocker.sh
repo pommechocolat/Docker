@@ -1,8 +1,8 @@
 #!/bin/sh
 # Author : JLM
-#start boot2docker and container
+#start all my containers
 
-cdata=$(pwd)/../cdata
+cdata=$(pwd)/cdata
 
 if [[ $# -eq 1 ]];then
   cdata=$1
@@ -12,7 +12,7 @@ echo $cdata
 #start booot2docker
 #boot2docker up
 
-cd php5.3
+cd containers/php5.3
 docker build -t php53apache22 .
 cd ../php5.4
 docker build -t php54apache22 .
@@ -22,7 +22,7 @@ cd ../mariadb
 docker build -t db_maria_sql .
 cd ../rubyRvm
 docker build -t rvm_maison .
-cd ..
+cd ../..
 
 docker images
 
