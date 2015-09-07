@@ -67,6 +67,9 @@ RUN php --version
 RUN sed -i 's/User daemon/User apache/g' /usr/local/apache2/conf/httpd.conf
 RUN sed -i 's/Group daemon/Group staff/g' /usr/local/apache2/conf/httpd.conf
 RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf
+WORKDIR /usr/local/apache2/conf
+RUN mkdir enable
+RUN echo "Include conf/enable/*.conf" >> /usr/local/apache2/conf/httpd.conf
 
 RUN echo "<?php phpinfo(); " > /usr/local/apache2/htdocs/info.php
 

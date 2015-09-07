@@ -47,10 +47,14 @@ La commande peut être lancée plusieurs fois en modifiant le docker file. La no
   
 Le lanement du serveur Apache 2.2/Php5.3 se fait à l'aide la commande :
 ```
-docker run -td -p 80:80 -v /host/path/to/www_data:/usr/local/apache2/htdocs --name php53 php53apache22
+docker run -td -p 80:80 -v /host/path/to/www_data:/usr/local/apache2/htdocs -v /host/path/to/www_conf:/usr/local/apache2/conf/extra -v  /host/path/to/www_logs:/usr/local/apache2/logs --name php53 php53apache22
 ```
 -p 80:80 permet de transport du port de communicartion http vers l'extérieur
- 
+
+```
+ #Include conf/extra/httpd-vhosts.conf
+```
+
 ## PhpSilex
 Pour construire l'image phpSilex
 ```
@@ -131,7 +135,7 @@ Il est alors simple d'accèder avec les comandes suivantes :
 # Lancment des VM Docker
 ## PHP53
 ```
-docker run -td -p 80:80 -p 9000:9000 -v $(pwd)/Sites:/usr/local/apache2/htdocs -v $(pwd)logs:/usr/local/apache2/logs --name myphp53 php53apache22
+docker run -td -p 80:80 -p 9000:9000 -v $(pwd)/Sites:/usr/local/apache2/htdocs -v $(pwd)logs:/usr/local/apache2/logs -v $(pwd)siteEnable:/usr/local/apache2/conf/extra --name myphp53 php53apache22
 ```
 ### Options possibles
 --name myphp53
