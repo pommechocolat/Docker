@@ -35,8 +35,8 @@ RUN echo xdebug.remote_autostart=0 >> /etc/php5/conf-available/xdebug.ini
 RUN echo xdebug.remote_connect_back=1 >> /etc/php5/conf-available/xdebug.ini
 RUN echo xdebug.remote_port=9000 >> /etc/php5/conf-available/xdebug.ini
 RUN echo xdebug.remote_log=/var/log/apache2/xdebug.php >> /etc/php5/conf-available/xdebug.ini
-ln -s /etc/php5/conf-available/xdebug.ini /etc/php5/apache2/conf.d/xdebug.ini
-
+RUN ln -s /etc/php5/conf-available/xdebug.ini /etc/php5/mods-available/
+RUN php5enmod xdebug
 
 #ENTRYPOINT /usr/sbin/apache2ctl -D FOREGROUND
 #Insère le fichier _startApache.sh dans le conteneur
