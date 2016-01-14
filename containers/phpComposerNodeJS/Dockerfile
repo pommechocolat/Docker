@@ -1,6 +1,6 @@
 # Docker file par JLM pour avoir un serveur web avec PHP5
 
-FROM phusion/baseimage:0.9.17
+FROM jlm/baseimage
 MAINTAINER pommechocolat <dev.pommechocolat@free.fr>
 # C'est juste indispensable pour ne pas avoir de souci
 ENV DEBIAN_FRONTEND noninteractive
@@ -13,7 +13,7 @@ RUN useradd -u 1000 -g 50 -c "Apache Server" -d /var/www -s /usr/sbin/nologin ap
 
 RUN apt-get update > /dev/null
 # Pas certain d'avoir besoin de ça... mais comme y a une erreur... tentative de correction
-#RUN apt-get -y install apt-utils > /dev/null
+RUN apt-get -y install apt-utils > /dev/null
 RUN apt-get -y upgrade > /dev/null
 RUN apt-get -y install curl
 
@@ -33,15 +33,15 @@ RUN sed -i 's/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=staff/g' /etc/apache2/e
 
 #Mise en place de xDebug. Ce serait bien de le mettre dans un container (de dev) à part !!
 #https://github.com/henrik-farre/docker/blob/master/Dockerfile
-RUN apt-get install -y php5-xdebug
+#RUN apt-get install -y php5-xdebug
 
-RUN echo xdebug.remote_enable=1 >> /etc/php5/mods-available/xdebug.ini
-RUN echo xdebug.remote_autostart=0 >> /etc/php5/mods-available/xdebug.ini
-RUN echo xdebug.remote_connect_back=1 >> /etc/php5/mods-available/xdebug.ini
-RUN echo xdebug.remote_port=9000 >> /etc/php5/mods-available/xdebug.ini
-RUN echo xdebug.remote_log=/var/log/apache2/xdebug.php >> /etc/php5/mods-available/xdebug.ini
-#RUN ln -s /etc/php5/conf-available/xdebug.ini /etc/php5/mods-available/
-RUN php5enmod xdebug
+#RUN echo xdebug.remote_enable=1 >> /etc/php5/mods-available/xdebug.ini
+#RUN echo xdebug.remote_autostart=0 >> /etc/php5/mods-available/xdebug.ini
+#RUN echo xdebug.remote_connect_back=1 >> /etc/php5/mods-available/xdebug.ini
+#RUN echo xdebug.remote_port=9000 >> /etc/php5/mods-available/xdebug.ini
+#RUN echo xdebug.remote_log=/var/log/apache2/xdebug.php >> /etc/php5/mods-available/xdebug.ini
+##RUN ln -s /etc/php5/conf-available/xdebug.ini /etc/php5/mods-available/
+#RUN php5enmod xdebug
 
 RUN apt-get clean
 RUN rm -rf /tmp/* /var/tmp/*
