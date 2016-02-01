@@ -1,0 +1,46 @@
+# Projet de dev Web avec
+#  - Mariadb
+#  - Ruby -> Compass, haml, coffee télécharger dumpsiteWeb
+#  - php -> compose Symfoy2
+#  - postgresql ??
+
+mydata:
+  image: busybox
+  stdin_open: true
+  volumes:
+    - "./_data/mydb:/var/lib/mysql"
+    - "./_data/log_apache:/var/log/apache2"
+    - "./_data/web:/var/www/html"
+    - "./_data/conf_apache:/etc/apache2/sites-enabled"
+
+mariadb:
+  build: ./mariadb/.
+  ports:
+    - "6666:3306"
+  volumes_from:
+    - mydata 
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+#    - MYSQL_DATABASE=
+#    - MYSQL_USER=
+#    - MYSQL_PASSWORD=
+    - PUID=1000
+    - PGID=50
+
+ruby:
+  image: tectoro/node-compass
+  stdin_open: true
+  links:
+    - mariadb
+#  volumes_from:
+#    - mydata 
+
+php:
+  image: php:5-apache
+  stdin_open: true
+  ports: 
+    - "8880:80"
+#  volumes_from:
+#    - mydata
+  links:
+    - mariadb
