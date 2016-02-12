@@ -108,6 +108,12 @@ Suppression de toutes les images non nommées
 docker rmi $(docker images | grep '<none>' | sed 's/  */:/g' | cut -d: -f3)
 ```
 
+### Récupération d'une image qui ne veux pas démarrer
+```
+docker run -i -t --name <newContainer> --entrypoint /bin/bash <imageID>
+  #faire les modification nécessaire et ressortir
+docker commit <newContainer> <imageID>
+```
 ## Redirection de port
 L'accès au host via l'url de boot2docker ne pose aucun problème.
 Il est possible d'attaquer boot2docker par localhost à la condition d'utiliser un port au delà de 1000 (exemple 8080) en configurant la VM dans Virtualbox avec une ligne de redirection de port de type : "docker,127.0.0.1, 8080, ,80". On peu aussi le faire à la ligne de commande avec la formule suivnate : 
