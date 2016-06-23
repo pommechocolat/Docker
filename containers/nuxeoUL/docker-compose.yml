@@ -1,0 +1,28 @@
+# Démarrage : docker-compose up -d
+# Arret     : docker-compose stop
+# Nettoyage : docker-compose rm -f
+
+version: '2'
+services:
+
+  mydata:
+    image: busybox
+    stdin_open: true
+    volumes:
+      - "../../cdata/db_data:/var/lib/mysql"
+
+  dbmysql:
+    image: jlm/maria
+    ports:
+      - "3306:3306"
+    volumes_from:
+      - mydata 
+    environment:
+      - TERM=dumb
+
+  nuxeo:
+    build: .
+    depends_on:
+      - dbmysql
+    ports:
+      - "8080:8080"

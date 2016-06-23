@@ -21,4 +21,3 @@ fi
 # on autorise root à ce connecter de toute part. On rejout les privilège à chaque fois pour que ça fonctionne sur une installation definie par ailleurs ou l'on ne serait pas passé paur le test ci-dessous.
 echo $GRANT_ROOT | mysql
 echo $GRANT_DEBIAN | mysql
-#/bin/bash

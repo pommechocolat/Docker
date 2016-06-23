@@ -6,7 +6,7 @@ docker build -t jlm/npm .
 
 Pour construire un conteneur en mode interactif avec l'éventualité d'un serveur web répondant sur le port 8080 avec une redirection de port pour utiliser sur l'hôst le port 8099 (8080 étant pris par tomcat java / nuxéo) la commande sera :
 ```
-docker run -ti -p 8099:8080 --name mynpm jlm/npm
+docker run -ti -p 8099:8080 -v /pathToWorkDir:/home --name mynpm jlm/npm
 ```
 
 Pour saisir ce fichier dans le docker, il suffit de faire un 

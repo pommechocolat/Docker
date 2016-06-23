@@ -1,6 +1,6 @@
 #http://blog.ineat-conseil.fr/2015/06/docker-pour-les-nuls-avec-nuxeo/
 
-FROM jlm/baseimage
+FROM debian:jessie
 MAINTAINER pommechocolat <dev.pommechocolat@free.fr>
 
 RUN apt-get update > /dev/null
@@ -21,7 +21,7 @@ RUN ln -s /usr/share/java/mysql.jar /var/lib/nuxeo/server/lib
 #configuration pour Mysql. Je vire la config Postgresql
 RUN sed -i 's/nuxeo\.templates=postgresql/nuxeo\.templates=mysql/g' /etc/nuxeo/nuxeo.conf
 RUN sed -i 's/nuxeo\.db\.port=5433/nuxeo\.db\.port=3306/g' /etc/nuxeo/nuxeo.conf
-RUN sed -i 's/nuxeo\.db\.host=localhost/nuxeo\.db\.host=192.168.99.100/g' /etc/nuxeo/nuxeo.conf
+RUN sed -i 's/nuxeo\.db\.host=localhost/nuxeo\.db\.host=194.199.223.112/g' /etc/nuxeo/nuxeo.conf
 
 #RUN echo 'JAVA_OPTS=$JAVA_OPTS -cp /usr/share/java/mysql.jar' >> /etc/nuxeo/nuxeo.conf
 #la base est nuxeo/nuxeo/ael1Dai7
@@ -36,5 +36,5 @@ RUN apt-get clean
 RUN rm -rf /tmp/* /var/tmp/*
 RUN rm -rf /var/lib/apt/lists/*
 
-#ENTRYPOINT nuxeoctl console
-CMD ["/bin/bash"]
+ENTRYPOINT nuxeoctl start -d
+#CMD ["/bin/bash"]
