@@ -1,0 +1,47 @@
+# Démarrage : docker-compose up -d --build
+# Arret     : docker-compose stop
+# Nettoyage : docker-compose rm -f
+
+version: '2'
+services:
+
+  #Aussi bizare que cela puisse paraitre, mydata n'est pas active, mais l'accès aux dossiers se fait parfaitement !!!!
+  mydata:
+    image: busybox
+    stdin_open: true
+    volumes:
+      - "./db_data:/var/lib/mysql"
+      - "./site/omeka:/var/www/html"
+
+  db:
+    image: mariadb:5.5
+    ports:
+       - "6606:3306"
+    volumes_from:
+      - mydata 
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=omeka
+      - MYSQL_PASSWORD=omeka
+      - MYSQL_DATABASE=omeka
+
+  dbadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_USERNAME: omeka
+      MYSQL_PASSWORD: omeka
+    links:
+      - db
+
+  omeka:
+    build: .
+    depends_on:
+      - dbadmin
+    ports:
+      - "8011:80"
+    links:
+      - db
+    volumes_from:
+      - mydata
